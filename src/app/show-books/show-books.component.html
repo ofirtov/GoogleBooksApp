@@ -1,0 +1,192 @@
+<header>
+    <div class="collapse bg-dark" id="navbarHeader"></div>
+    <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+            <a href="#" class="navbar-brand d-flex align-items-center">
+                <strong><i class="fas fa-book-reader"></i>&nbsp;Google Books Application</strong>
+            </a>
+        </div>
+    </div>
+</header>
+
+<main role="main">
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">Google Books Application</h1>
+            <p class="lead text-muted">A simple application to fetch books list from Google Books API and display them
+                on one page. You can edit, delete or add book in this app.</p>
+            <p class="lead text-muted">You can start by adding a new book to the list with the button bellow</p>
+            <p>
+                <button type="button" class="btn btn-primary" (click)="openAddBookModal()">Add A New Book</button>
+            </p>
+        </div>
+    </section>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4" *ngFor="let book of booksArr; index as i">
+                    <div class="card mb-4 box-shadow">
+                        <img class="card-img-top" data-src="{{book.image}}" alt="{{book.title}}">
+                        <div class="card-body">
+                            <p class="card-text"><label><strong>ID:</strong></label> {{ book.id }}</p>
+                            <p class="card-text capitalize"><label><strong>Title:</strong></label> {{ book.title}}</p>
+                            <p class="card-text"><label><strong>Author:</strong></label> {{ book.authors }}</p>
+                            <p class="card-text"><label><strong>Publish Date:</strong></label> {{ book.published }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-md btn-danger"
+                                            id="delete{{i}}" name="delete" (click)="deleteBook(i)">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Delete
+                                    </button>
+                                    <button id="edit{{i}}" type="button"
+                                            class="btn btn-md btn-success"
+                                            style="width: 90px"
+                                            (click)="openEditBookModal(i)">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;Edit
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="text-muted">
+    <div class="container">
+        <p class="float-right">
+            <a href="#">Back to top</a>&nbsp;<i class="fa fa-arrow-circle-up"></i>
+        </p>
+    </div>
+</footer>
+
+<!-- Add Book Modal -->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true"
+     [ngStyle]="{'display':display}" *ngIf="!isEdit; else editBookModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Add a new book</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="onCloseHandled()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="addBook">
+                    <form [formGroup]="addBookForm" (ngSubmit)="addBook(addBookForm.value)">
+                        <div class="form-group">
+                            <label for="id">ID</label>
+                            <input type="text" class="form-control" id="id" name="id" formControlName="id" value="">
+                            <div class="alert alert-danger"
+                                 *ngIf="!addBookForm.controls['id'].valid && addBookForm.controls['id'].touched">
+                                The ID is required
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" formControlName="title"
+                                   value="">
+                            <div class="alert alert-danger"
+                                 *ngIf="!addBookForm.controls['title'].valid && addBookForm.controls['title'].touched">
+                                The Title is required
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="author">Author</label>
+                            <input type="text" class="form-control" id="author" name="author" formControlName="author"
+                                   value="">
+                            <div class="alert alert-danger"
+                                 *ngIf="!addBookForm.controls['author'].valid && addBookForm.controls['author'].touched">
+                                The Author is required
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="published">Publish date</label>
+                            <input type="text" class="form-control" id="published" name="published"
+                                   formControlName="published" value="">
+                            <div class="alert alert-danger"
+                                 *ngIf="!addBookForm.controls['published'].valid && addBookForm.controls['published'].touched">
+                                The Publish date is required
+                            </div>
+                        </div>
+                        <button class="btn btn-success" type="submit" [disabled]="!addBookForm.valid"
+                                data-dismiss="modal">Add Book
+                        </button>
+                        <button type="button" class="btn btn-secondary" (click)="onCloseHandled()">Close</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<ng-template #editBookModal>
+    <div class="modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true"
+         [ngStyle]="{'display':display}">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit book</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                            (click)="onCloseHandled()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="editBook">
+                        <form [formGroup]="editBookForm" (ngSubmit)="editBook(editBookForm.value)">
+                            <div class="form-group">
+                                <label for="editId">ID</label>
+                                <input type="text" class="form-control" id="editId" name="editId"
+                                       formControlName="id" value="{{this.currentId}}">
+                                <div class="alert alert-danger"
+                                     *ngIf="!editBookForm.controls['id'].valid && editBookForm.controls['id'].touched">
+                                    The ID is required
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editTitle">Title</label>
+                                <input type="text" class="form-control" id="editTitle" name="editTitle"
+                                       formControlName="title" value="{{this.currentTitle}}">
+                                <div class="alert alert-danger"
+                                     *ngIf="!editBookForm.controls['title'].valid && editBookForm.controls['title'].touched">
+                                    The Title is required
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editAuthor">Author</label>
+                                <input type="text" class="form-control" id="editAuthor" name="editAuthor"
+                                       formControlName="author" value="{{this.currentAuthor}}">
+                                <div class="alert alert-danger"
+                                     *ngIf="!editBookForm.controls['author'].valid && editBookForm.controls['author'].touched">
+                                    The Author is required
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="editPublished">Publish date</label>
+                                <input type="text" class="form-control" id="editPublished" name="editPublished"
+                                       formControlName="published" value="{{this.currentPublish}}">
+                                <div class="alert alert-danger"
+                                     *ngIf="!editBookForm.controls['published'].valid && editBookForm.controls['published'].touched">
+                                    The Published date is required
+                                </div>
+                            </div>
+                            <button class="btn btn-success" type="submit" [disabled]="!editBookForm.valid"
+                                    data-dismiss="modal">Edit Book
+                            </button>
+                            <button type="button" class="btn btn-secondary" (click)="onCloseHandled()">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</ng-template>
+
