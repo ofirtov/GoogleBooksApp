@@ -1,5 +1,7 @@
 # AngularGoogleBooks
 
+A single page application built with Angular 2+. One can search for books from Google books API 
+And Edit/Delete or add new one.
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.3.
 
 ## Development server
